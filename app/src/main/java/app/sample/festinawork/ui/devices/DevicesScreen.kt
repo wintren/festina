@@ -91,7 +91,12 @@ private fun DevicesContent(
                     true -> "Disconnect"
                     false -> "Connect"
                 },
-            ) { actions.connectDevice(!state.activeDeviceConnected) }
+            ) {
+                actions.connectDevice(
+                    id = state.activeDeviceId ?: "missing",
+                    connect = !state.activeDeviceConnected
+                )
+            }
         }
     }
 }

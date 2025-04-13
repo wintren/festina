@@ -9,7 +9,8 @@ class DisconnectDeviceUseCase @Inject constructor(
 
     // handle Result makes sure to catch errors, without catching any Interruption exceptions for the suspend/coroutine
     suspend operator fun invoke(id: String): Result<String> = handleResult { // Result...
-        "TODO ($id)"
+        repo.disconnect(id)
+        "Disconnected $id"
     }
 
 }

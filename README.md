@@ -41,3 +41,11 @@ This is something I really like as it separates User facing resources and app im
 * I am cleaning up the models I got provided; naming, structure etc.
 * Took a break when receiving people that want to buy my Piano.
 * Fixed a bug in UseCase where only exception thrown in a flow was being caught, and not surrounding function.
+
+---
+
+* I definitely did not go about this the correct way. Creating a UI with states for two devices like I did just created UI logic that needs solving which took some time even when not wanting to dive too deep into it.
+* If I would have started out with a scrappy Repo / Data Source solution from the start I would have been able to catch how the actual data flow would have been and I wouldn't have painted myself into a corner where observability would not be be such a big target.
+* Solution is not complete, but there are things in place for discussion and I hope that it will suffice
+* Next step would be to start investigating the Disconnect from '456' when it reaches next step of the log, and why it afterwards remain connectable. Some Repo state probably
+* Conclusion here is that I invented more requirements for myself than what was asked for and more requirements of course takes more time, and when you also start in the wrong end - well, you end up where I've done. 

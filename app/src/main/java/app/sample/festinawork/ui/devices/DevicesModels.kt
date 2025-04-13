@@ -8,11 +8,12 @@ object DevicesModels {
     data class State(
         val loading: Boolean = true,
         val activeDeviceId: String? = null,
-        val activeDeviceConnected: Boolean = false,
         val devices: List<DeviceItem> = emptyList(),
         /** Don't know how this would look yet but if the output is messy this makes it possible to format this to some extent and demonstrate some responsibility of ViewModel vs View. If it's very simple and over-engineered this will change to a string. */
         val deviceOutput: List<String> = emptyList(),
-    )
+    ) {
+        val activeDeviceConnected: Boolean get() = devices.firstOrNull { it.id == activeDeviceId }?.status == DeviceDetailsButton.ConnectingStatus.Connected
+    }
 
     data class DeviceItem(
         val id: String,
@@ -28,11 +29,11 @@ object DevicesModels {
     }
 
     interface Actions {
-        fun connectDevice(connect: Boolean)
+        fun connectDevice(id: String, connect: Boolean)
 
         companion object {
             operator fun invoke() = object : Actions {
-                override fun connectDevice(connect: Boolean) {}
+                override fun connectDevice(id: String, connect: Boolean) {}
             }
         }
     }
@@ -40,7 +41,6 @@ object DevicesModels {
     val PreviewStateTwoDevices: State = State(
         // Single Device Connected - No Output
         activeDeviceId = "123",
-        activeDeviceConnected = true,
         devices = listOf(
             DeviceItem(
                 id = "123",
@@ -58,7 +58,6 @@ object DevicesModels {
 
     val PreviewStateSingleDevice = State(
         activeDeviceId = "123",
-        activeDeviceConnected = false,
         devices = listOf(
             DeviceItem(
                 id = "123",

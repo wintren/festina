@@ -8,5 +8,5 @@ interface DeviceRepository {
     fun deviceListing(): Flow<List<DeviceInfo>>
     fun connect(id: String): Flow<Device>
     fun disconnect(id: String)
-    fun command(/*Some Input*/) // todo, later
+    fun readLog(id: String): Flow<List<String>>
 }
