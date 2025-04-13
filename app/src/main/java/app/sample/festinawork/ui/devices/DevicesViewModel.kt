@@ -3,7 +3,10 @@ package app.sample.festinawork.ui.devices
 import android.util.Log
 import app.sample.domain.model.DeviceInfo
 import app.sample.domain.model.DeviceStatus
+import app.sample.domain.result.ConnectDeviceResult
 import app.sample.domain.result.DeviceListingResult
+import app.sample.domain.usecase.ConnectDeviceUseCase
+import app.sample.domain.usecase.DisconnectDeviceUseCase
 import app.sample.domain.usecase.GetDeviceListingUseCase
 import app.sample.festinawork.ui.devices.DevicesModels.Actions
 import app.sample.festinawork.ui.devices.DevicesModels.Event
@@ -18,7 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DevicesViewModel @Inject constructor(
-    private val getDevices: GetDeviceListingUseCase
+    private val getDevices: GetDeviceListingUseCase,
+    private val connectDevice: ConnectDeviceUseCase,
+    private val disconnectDevice: DisconnectDeviceUseCase
 ) : StateEventViewModel<State, Event>(), Actions {
 
     override val stateFlow = MutableStateFlow(State())
@@ -97,11 +102,20 @@ class DevicesViewModel @Inject constructor(
         when (state.activeDeviceConnected) {
             false -> {
                 sendEvent(Event.ShowToast("Connecting to Device ($id) ..."))
-                // TODO: Domain logic
+                launch {
+                    connectDevice(id).collect {
+                        when (it) {
+                            is ConnectDeviceResult.ConnectedDevice -> sendEvent(Event.ShowToast("ConnectedDevice"))
+                            ConnectDeviceResult.Connecting -> sendEvent(Event.ShowToast("Connecting"))
+                            is ConnectDeviceResult.Disconnected -> sendEvent(Event.ShowToast("Disconnected"))
+                            is ConnectDeviceResult.Error -> sendEvent(Event.ShowToast("Error: ${it.message}"))
+                        }
+                    }
+                }
             }
             true -> {
                 sendEvent(Event.ShowToast("Disconnecting to Device ($id) ..."))
-                // TODO: Domain logic
+                disconnectDevice(id)
             }
         }
     }

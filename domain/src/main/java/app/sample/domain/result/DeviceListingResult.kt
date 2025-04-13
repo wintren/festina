@@ -6,6 +6,6 @@ sealed interface DeviceListingResult {
     data object NoDevices : DeviceListingResult
     data class Devices(val devices: List<DeviceInfo>) : DeviceListingResult
     data class Error(val throwable: Throwable) : DeviceListingResult {
-        val message: String get() = throwable.message ?: "Unknown error"
+        val message: String get() = throwable.message?.takeIf { it.isNotEmpty() } ?: "Unknown error"
     }
 }

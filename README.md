@@ -39,4 +39,5 @@ This is something I really like as it separates User facing resources and app im
 
 * Work on the Actual Provided models and logic starting. This is done with not much time left of the assignment but I am hopeful that the well structured foundation will make it easy for me to incorporate the functionality.
 * I am cleaning up the models I got provided; naming, structure etc.
-* 
+* Took a break when receiving people that want to buy my Piano.
+* Fixed a bug in UseCase where only exception thrown in a flow was being caught, and not surrounding function.
