@@ -43,16 +43,18 @@ object DeviceDetailsButton {
     @Composable
     operator fun invoke(
         id: String,
+        active: Boolean,
         status: ConnectingStatus,
         modifier: Modifier = Modifier,
         onClick: () -> Unit
     ) {
 
+        val containerColor = if (active) Chrono.colors.primaryContainer else Chrono.colors.surfaceContainer
         Row(
             modifier
                 .border(width = 1.dp, color = Chrono.colors.outline, shape = buttonShape)
                 .clip(buttonShape)
-                .background(color = Chrono.colors.surfaceContainer)
+                .background(color = containerColor)
                 .clickable(onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -81,8 +83,9 @@ object DeviceDetailsButton {
                 }
             }
             Column {
-                Text(text = "Device $id", style = Chrono.typo.label3Bold)
-                Text(text = status.label(), style = Chrono.typo.body2Regular)
+                val contentColor = Chrono.colors.contentColorFor(containerColor)
+                Text(text = "Device $id", style = Chrono.typo.label3Bold, color = contentColor)
+                Text(text = status.label(), style = Chrono.typo.body2Regular, color = contentColor)
             }
         }
     }
@@ -95,29 +98,34 @@ fun PreviewDevice() = PreviewColumn {
     DeviceDetailsButton(
         modifier = Modifier.fillMaxWidth(),
         id = "123",
+        active = true,
         status = DeviceDetailsButton.ConnectingStatus.Connected
-    ){}
+    ) {}
     DeviceDetailsButton(
         modifier = Modifier.fillMaxWidth(),
         id = "123",
+        active = false,
         status = DeviceDetailsButton.ConnectingStatus.Disconnected
-    ){}
+    ) {}
     DeviceDetailsButton(
         modifier = Modifier.fillMaxWidth(),
         id = "123",
+        active = false,
         status = DeviceDetailsButton.ConnectingStatus.Connecting
-    ){}
+    ) {}
 
     Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         DeviceDetailsButton(
             modifier = Modifier.weight(1F),
             id = "123",
+            active = true,
             status = DeviceDetailsButton.ConnectingStatus.Connecting
-        ){}
+        ) {}
         DeviceDetailsButton(
             modifier = Modifier.weight(1F),
             id = "456",
+            active = false,
             status = DeviceDetailsButton.ConnectingStatus.Disconnected
-        ){}
+        ) {}
     }
 }

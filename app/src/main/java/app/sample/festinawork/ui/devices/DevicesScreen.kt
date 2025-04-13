@@ -1,5 +1,6 @@
 package app.sample.festinawork.ui.devices
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,29 +32,59 @@ fun DevicesScreen(
     actions: DevicesModels.Actions
 ) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        val scaffoldPadding = Modifier.padding(innerPadding)
+        when (state.loading) {
+            true -> Box(
+                modifier = scaffoldPadding.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+            false -> DevicesContent(scaffoldPadding, state, actions)
+        }
+    }
+}
+
+@Composable
+private fun DevicesContent(
+    modifier: Modifier = Modifier,
+    state: DevicesModels.State,
+    actions: DevicesModels.Actions
+) {
+    Column(
+        modifier = modifier.padding(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxWidth(),
+            visible = state.devices.isNotEmpty()
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 state.devices.forEach { device ->
                     DeviceDetailsButton(
                         modifier = Modifier.weight(1F),
+                        // This (active: Boolean) could also be part of the model from the ViewModel
+                        //  I am trying to mix some conventions to show different usages
+                        active = state.activeDeviceId == device.id,
                         id = device.id,
                         status = device.status,
                         onClick = device.onClick
                     )
                 }
             }
+        }
 
-            DeviceOutput(
-                modifier = Modifier.weight(1f),
-                connected = state.activeDeviceConnected,
-                output = state.deviceOutput
-            )
+        DeviceOutput(
+            modifier = Modifier.weight(1f),
+            id = state.activeDeviceId ?: "-",
+            connected = state.activeDeviceConnected,
+            output = state.deviceOutput
+        )
 
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxWidth(),
+            visible = state.activeDeviceId != null
+        ) {
             ChronoButton(
                 modifier = Modifier.fillMaxWidth(),
                 text = when (state.activeDeviceConnected) {
@@ -65,7 +97,11 @@ fun DevicesScreen(
 }
 
 @Composable
-fun DeviceOutput(connected: Boolean, output: List<String>, modifier: Modifier = Modifier) {
+fun DeviceOutput(
+    connected: Boolean,
+    id: String,
+    output: List<String>, modifier: Modifier = Modifier
+) {
     val outputModifier = modifier
         .fillMaxWidth()
         .border(
@@ -84,7 +120,11 @@ fun DeviceOutput(connected: Boolean, output: List<String>, modifier: Modifier = 
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Spacer(modifier = Modifier.padding(16.dp))
+                Text(
+                    modifier = Modifier.padding(vertical = 16.dp),
+                    text = "Device Output ($id)",
+                    style = Chrono.typo.label3Bold
+                )
                 when (output.isNotEmpty()) {
                     true -> output.forEach { outputLine ->
                         Text(
@@ -98,10 +138,15 @@ fun DeviceOutput(connected: Boolean, output: List<String>, modifier: Modifier = 
             }
         }
         false -> {
-            Box(
+            Column(
                 modifier = outputModifier,
-                contentAlignment = Alignment.Center
+                verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(
+                    text = "Device ($id)",
+                    style = Chrono.typo.label1
+                )
                 Text(
                     text = "Not Connected",
                     style = Chrono.typo.label3Bold

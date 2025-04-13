@@ -1,12 +1,12 @@
 [versions]
 agp = "8.9.1" # Android Google Plugin
-kotlin = "2.1.20"
+kotlin = "2.0.20" # Keeping a lower version of Kotlin so that I don't need to spend time on new handling for Hilt
 
 # Android
 coreKtx = "1.16.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.1"
-appcompat = "1.7.0"
+androidX-hilt = "1.2.0"
 
 # Testing
 junit = "4.13.2"
@@ -17,26 +17,40 @@ espressoCore = "3.6.1"
 composeBom = "2025.04.00"
 compose-plugin = "1.7.3"
 
+# Dependency Injection
+hilt = "2.49"
+hilt-compose = "1.2.0" # todo, check version
+
 [libraries]
+
+# Android
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+
+# Compose
+#androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+# Dependency Injection
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-compose" }
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidX-hilt" }
+
+# Testing
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+
 
 [bundles]
 compose-tooling = ["androidx-ui-tooling", "androidx-ui-tooling-preview"]
-#hilt-app = ["hilt", "hilt-compose", "androidx-hilt-work"]
-#hilt-compiler = ["hilt-compiler", "hilt-compose", "androidx-hilt-compiler"]
+hilt-app = ["hilt", "hilt-compose"]
+hilt-compiler = ["hilt-compiler", "hilt-compose", "androidx-hilt-compiler"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -44,4 +58,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
-
+hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }

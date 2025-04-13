@@ -6,6 +6,7 @@ import app.sample.studio.component.DeviceDetailsButton
 object DevicesModels {
 
     data class State(
+        val loading: Boolean = true,
         val activeDeviceId: String? = null,
         val activeDeviceConnected: Boolean = false,
         val devices: List<DeviceItem> = emptyList(),
@@ -21,6 +22,10 @@ object DevicesModels {
         // Since I will be able to showcase the Actions anyway I will use this approach.
         val onClick: () -> Unit
     )
+
+    sealed interface Event {
+        data class ShowToast(val message: String) : Event
+    }
 
     interface Actions {
         fun connectDevice(connect: Boolean)
