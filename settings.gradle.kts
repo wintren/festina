@@ -22,3 +22,7 @@ dependencyResolutionManagement {
 rootProject.name = "Festina Sample"
 include(":app")
 include(":studio")
+include(":di")
+include(":domain")
+include(":core")
+include(":data")

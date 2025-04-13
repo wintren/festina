@@ -1,4 +1,4 @@
-package app.sample.festinawork
+package app.sample.domain
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope

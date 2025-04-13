@@ -1,7 +1,8 @@
-package app.sample.festinawork
+package app.sample.lib
 
 import android.content.Context
 import android.content.res.Resources
+import app.sample.domain.CoroutineScopes
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

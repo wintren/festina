@@ -40,7 +40,9 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":di"))
+    implementation(project(":domain"))
+    implementation(project(":core"))
     implementation(project(":studio"))
 
     // Compose

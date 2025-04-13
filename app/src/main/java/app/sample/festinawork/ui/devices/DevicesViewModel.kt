@@ -1,61 +1,86 @@
 package app.sample.festinawork.ui.devices
 
 import android.util.Log
+import app.sample.domain.model.DeviceInfo
+import app.sample.domain.model.DeviceStatus
+import app.sample.domain.result.DeviceListingResult
+import app.sample.domain.usecase.GetDeviceListingUseCase
 import app.sample.festinawork.ui.devices.DevicesModels.Actions
 import app.sample.festinawork.ui.devices.DevicesModels.Event
 import app.sample.festinawork.ui.devices.DevicesModels.State
 import app.sample.festinawork.util.viewmodel.StateEventViewModel
 import app.sample.festinawork.util.viewmodel.launch
-import app.sample.studio.component.DeviceDetailsButton
+import app.sample.studio.component.DeviceDetailsButton.ConnectingStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class DevicesViewModel @Inject constructor() : StateEventViewModel<State, Event>(), Actions {
+class DevicesViewModel @Inject constructor(
+    private val getDevices: GetDeviceListingUseCase
+) : StateEventViewModel<State, Event>(), Actions {
 
     override val stateFlow = MutableStateFlow(State())
-    private var initialActiveDeviceSet: Boolean = false
 
     init {
-        // todo Initialise screen from Repo or Use Case (Domain)
         launch {
-            delay(1000)
-            updateState { copy(loading = false) }
-            val deviceListing = listOf(
-                MockDomainDevice(id = "123", connected = false, connecting = false),
-                MockDomainDevice(id = "456", connected = false, connecting = false)
-            )
-            delay(200)
-            // Delay to animate UI essentially
-
-            updateState(deviceListing)
+            delay(500)
+            getDevices().collect { result ->
+                when (result) {
+                    is DeviceListingResult.Devices -> {
+                        Log.i("DevicesViewModel", "Listing Devices")
+                        updateState { copy(loading = false) }
+                        updateState(result.devices)
+                        // Delay: Simple way to show animation in UI (silly but neat)
+                        delay(200)
+                    }
+                    DeviceListingResult.NoDevices -> {
+                        Log.i("DevicesViewModel", "Devices Missing")
+                        updateState { State(loading = false) }
+                    }
+                    is DeviceListingResult.Error -> {
+                        Log.e("DevicesViewModel", "Unable to get Device Listing", result.throwable)
+                        sendEvent(Event.ShowToast("Error: ${result.message}"))
+                        updateState {
+                            State(
+                                loading = false,
+                                deviceOutput = listOf("Error", result.message)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
-    private fun updateState(deviceListing: List<MockDomainDevice>) {
+    private fun updateState(deviceListing: List<DeviceInfo>) {
         updateState {
             val initialActiveDevice = deviceListing.first()
-            copy(
-                activeDeviceId = if (!initialActiveDeviceSet) initialActiveDevice.id else activeDeviceId,
-                activeDeviceConnected = if (!initialActiveDeviceSet) initialActiveDevice.connected else activeDeviceConnected,
-                devices = makeDeviceItems(deviceListing),
-                deviceOutput = emptyList() // wip: This will not be set by the listing
-                // Mock until we get domain data
-            )
+            val newDeviceIds = deviceListing.map { it.id }
+
+            // Update Initial State if needed
+            val initialState = if (state.devices.isEmpty() || state.activeDeviceId !in newDeviceIds) {
+                // If the previous state was no devices, or we've lost the active Device, set the first listed device as active
+                copy(
+                    activeDeviceId = initialActiveDevice.id,
+                    activeDeviceConnected = initialActiveDevice.status == DeviceStatus.CONNECTED
+                )
+            } else copy() // Don't update activeDevice on sequential updates of the "same listing"
+            // Update state that always should be updated
+
+            initialState.copy(devices = makeDeviceItems(deviceListing))
         }
-        initialActiveDeviceSet = true
     }
 
-    private fun makeDeviceItems(devices: List<MockDomainDevice>) = devices
-
+    private fun makeDeviceItems(devices: List<DeviceInfo>) = devices
         .map { device ->
             DevicesModels.DeviceItem(
                 id = device.id,
-                status = when (device.connected) {
-                    true -> DeviceDetailsButton.ConnectingStatus.Connected
-                    false -> DeviceDetailsButton.ConnectingStatus.Disconnected
+                status = when (device.status) {
+                    // Connecting is not part of the domain model - it's a "flow/logic state" and will be handled by the UI.
+                    DeviceStatus.CONNECTED -> ConnectingStatus.Connected
+                    DeviceStatus.DISCONNECTED -> ConnectingStatus.Disconnected
                 },
                 onClick = {
                     Log.d("DevicesViewModel", "Device Clicked: ${device.id}")
@@ -63,12 +88,6 @@ class DevicesViewModel @Inject constructor() : StateEventViewModel<State, Event>
                 }
             )
         }
-
-    data class MockDomainDevice(
-        val id: String,
-        val connected: Boolean,
-        val connecting: Boolean,
-    )
 
     override fun connectDevice(connect: Boolean) {
         // Here I throw an error - which is not pleasant for users.

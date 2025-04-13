@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.kotlinKapt)
+    alias(libs.plugins.hiltAndroid)
 }
 
 android {
-    namespace = "app.sample.studio"
+    namespace = "app.sample.domain"
     compileSdk = 35
 
     defaultConfig {
@@ -32,11 +32,12 @@ android {
 }
 
 dependencies {
-    implementation(compose.ui)
-    implementation(compose.runtime)
-    implementation(compose.foundation)
-    implementation(compose.material3)
-    implementation(compose.components.resources)
+    implementation(project(":core"))
 
-    implementation(libs.bundles.compose.tooling)
+    implementation(libs.bundles.hilt.app)
+    kapt(libs.bundles.hilt.compiler)
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

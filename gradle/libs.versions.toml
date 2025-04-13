@@ -19,7 +19,10 @@ compose-plugin = "1.7.3"
 
 # Dependency Injection
 hilt = "2.49"
-hilt-compose = "1.2.0" # todo, check version
+hilt-compose = "1.2.0"
+jetbrainsKotlinJvm = "2.0.20"
+appcompat = "1.7.0"
+material = "1.12.0" # todo, check version
 
 [libraries]
 
@@ -45,6 +48,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 
 [bundles]
@@ -60,3 +65,4 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }

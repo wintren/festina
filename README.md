@@ -23,4 +23,17 @@ This is something I really like as it separates User facing resources and app im
 * I have some special comment highlighting (wip, note, whatif, wtf) in addition to todo and fixme - so just imagine those would have some nice color ;)
 * Ideas regarding the Repository and logic is emerging: Devices will be acquired in two ways (probably/so far); a listing and a flow of a certain device's information/output.
 * LUNCH ^^
-* 
+* ViewModel and Hilt in Place
+
+---
+
+* Staring with domain and data logic - will need modules. (Don't need modules to do this - but this is a showcase so it should be available)
+* Introducing Modules:
+  * DI: Used to start Hilt injection graphs for all modules. Moving App DI here to make it hold something; but it can be empty.
+  * Core: Utility function that I might want to use in either: `:app`, `:domain`, `:data` and `:studio`
+  * Domain: "Business Logic" with `Domain Models`, repositories (definitions), use cases, analytics, logic handling
+  * Data: Implement the repositories in `:domain` and handle all Data Sources to provide the app (domain) with all models/data.
+* Created a Repo, its implementation, a use case and all connecting tissue to make it all fit together
+
+---
+

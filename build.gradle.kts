@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.kotlinKapt) apply false
     alias(libs.plugins.hiltAndroid) apply false
+    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 }
