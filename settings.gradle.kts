@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Festina Sample"
 include(":app")
- 
+include(":studio")
