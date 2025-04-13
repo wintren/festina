@@ -1,7 +1,7 @@
-package app.sample.festinawork
+package app.sample.festinawork.data
 
 
-interface DeviceInterface {
+interface Device {
 
     /**
     The device identifier is unique for all devices.
@@ -54,7 +54,7 @@ interface DeviceListener {
     - parameters:
     - device: the Device that a connection has been established for.
      */
-    fun onConnected(device: DeviceInterface)
+    fun onConnected(device: Device)
 
     /**
     Called when a connection to a Device has ended.
@@ -63,5 +63,5 @@ interface DeviceListener {
     - device: the Device that the connection has ended for.
     - error: Error that caused the disconnection. Null if the disconnection was caused by 'normal' circumstances.
      */
-    fun onDisconnected(device: DeviceInterface, error: Exception?)
+    fun onDisconnected(device: Device, error: Exception?)
 }

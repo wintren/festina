@@ -1,4 +1,4 @@
-package app.sample.festinawork
+package app.sample.festinawork.data
 
 import android.annotation.SuppressLint
 import kotlinx.coroutines.GlobalScope
@@ -17,10 +17,10 @@ import kotlin.random.Random
 
 const val logPageSize = 4
 
-class Device(
+class MockDevice(
     override var id: Int,
     override var deviceListener: DeviceListener?
-) : DeviceInterface {
+) : Device {
 
     private var commandState: CMDState? = null
     internal var isConnected: Boolean = false
@@ -74,7 +74,7 @@ class Device(
         GlobalScope.launch {
             delay((Random.nextDouble(1.0, 2.0) * 1000L).toLong())
             isConnected = true
-            this@Device.deviceListener?.onConnected(device)
+            this@MockDevice.deviceListener?.onConnected(device)
         }
     }
 
@@ -88,7 +88,7 @@ class Device(
 sealed class CMDState
 data class Log(val page: Int) : CMDState()
 data class Firmware(val revision: FirmwareRevision) : CMDState()
-object LogSize : CMDState()
+data object LogSize : CMDState()
 
 const val early = "rev_a"
 const val later = "rev_b"
@@ -135,7 +135,7 @@ sealed class DeviceError : Exception()
 class InvalidCommand : DeviceError()
 class InvalidCommandArgument : DeviceError()
 
-private fun Device.disconnect(error: Exception?, delayAmount: Long = 0) {
+private fun MockDevice.disconnect(error: Exception?, delayAmount: Long = 0) {
     val device = this
     GlobalScope.launch {
         delay(delayAmount)
@@ -144,7 +144,7 @@ private fun Device.disconnect(error: Exception?, delayAmount: Long = 0) {
     }
 }
 
-private fun Device.log(page: Int): String? {
+private fun MockDevice.log(page: Int): String? {
     val fw = fwRevision ?: return null
 
     val completeLog = fw.completeLog()
